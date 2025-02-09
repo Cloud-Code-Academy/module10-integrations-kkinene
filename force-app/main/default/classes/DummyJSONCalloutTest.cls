@@ -15,7 +15,8 @@ public with sharing class DummyJSONCalloutTest {
 
 		// As this is a future method, we need to enclose it in Test.startTest() and Test.stopTest() to ensure it's executed in the test context.
 		Test.startTest();
-		DummyJSONCallout.getDummyJSONUserFromId('1'); // Call the method with an example userId
+		Set<String> testvalue = new Set<String>{'1'};
+		DummyJSONCallout.getDummyJSONUserFromId(testvalue); // Call the method with an example userId
 		Test.stopTest();
 
 		// After the stopTest, the future method will have run. Now we can check if the contact was created correctly.
@@ -135,7 +136,7 @@ public with sharing class DummyJSONCalloutTest {
 	static void testContactInsert() {
 		//Create 100 contact
 		List<Contact> contacts = new List<Contact>();
-		for (Integer i = 0; i < 1; i++) {
+		for (Integer i = 0; i < 100; i++) {
 			contacts.add(new Contact(FirstName = 'Test', LastName = 'User' + i));
 		}
 
