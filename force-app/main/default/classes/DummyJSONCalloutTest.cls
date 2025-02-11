@@ -26,7 +26,6 @@ public with sharing class DummyJSONCalloutTest {
 			WHERE Id = :cont.Id
 			LIMIT 1
 		];
-		System.debug('cont.Id = '+ cont.Id);
 		// Assert statements to ensure that the values in the created contact match what was in our mock response.
 		System.assertEquals('test@example.com', cont.Email, 'Email does not match your value: ' + cont.Email);
 		System.assertEquals('+123456789', cont.Phone, 'Phone does not match your value: ' + cont.Phone);
@@ -107,7 +106,7 @@ public with sharing class DummyJSONCalloutTest {
 		Map<String, Object> payloadMap = (Map<String, Object>) JSON.deserializeUntyped(payload);
 
 		// Assertions to check if the payload contains the right data
-		System.assertEquals(testContact.Id, payloadMap.get('salesforceId'), 'Id does not match.');
+		System.assertEquals(String.valueOf(testContact.Id), payloadMap.get('id'), 'Id does not match.');
 		System.assertEquals('John', payloadMap.get('firstName'), 'FirstName does not match.');
 		System.assertEquals('Doe', payloadMap.get('lastName'), 'LastName does not match.');
 		System.assertEquals('john.doe@example.com', payloadMap.get('email'), 'Email does not match.');

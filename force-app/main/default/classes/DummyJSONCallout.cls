@@ -33,7 +33,7 @@ public with sharing class DummyJSONCallout {
 	 * 
      * @param dummyUserId The ID of the user in the external system to fetch data for.
      */
-	@future
+	@future(callout=true)
 	public static void getDummyJSONUserFromId(Set<String> dummyUserIds) {
 		//check for null or empty
 		if(dummyUserIds == null || dummyUserIds.isEmpty()) {
@@ -80,7 +80,7 @@ public with sharing class DummyJSONCallout {
 		}	
 
 		if(!contactsToUpsert.isEmpty()){
-			upsert contactsToUpsert DummyJSON_Id__c;
+			upsert contactsToUpsert;
 		}
 	}
 
@@ -119,7 +119,7 @@ public with sharing class DummyJSONCallout {
 		newContact.FirstName = firstName;
 		newContact.LastName = lastName;
 		if(String.isBlank(lastName)){
-			lastName = 'Unknown';
+			newContact.lastName = 'Unknown';
 		}
 		newContact.Email = email;
 		newContact.Phone = phone;
@@ -249,8 +249,7 @@ public with sharing class DummyJSONCallout {
 			tempCont.Phone='Unknown';
 		}
 		// Create a map of the contact field values.
-		Map<String, Object> contactMap = new Map<String, Object>{
-            'id' => tempCont.Id,
+		Map<String, Object> contactMap = new Map<String, Object>{'salesforceId' => String.valueOf(tempCont.Id),
             'firstName' => tempCont.FirstName,
             'lastName' => tempCont.LastName,
             'email' => tempCont.Email,

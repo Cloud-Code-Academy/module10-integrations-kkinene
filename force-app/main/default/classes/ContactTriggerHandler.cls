@@ -27,20 +27,25 @@ public class ContactTriggerHandler {
             DummyJSONCallout.getDummyJSONUserFromId(idsToFetch);
         }        
 	}	
-
-	public static void handleBeforeUpdate(List<Contact> newContacts){
-        Set<String> idsToPost = new Set<String>();
-
-        for(Contact tempCont : newContacts){
-            //If DummyJSON_Id__c > 100 add to set of Id's
-            if(tempCont.DummyJSON_Id__c != null && Integer.valueOf(tempCont.DummyJSON_Id__c)> 100){
-                idsToPost.add(tempCont.DummyJSON_Id__c);
+    public static void handleBeforeUpdate(List<Contact> newContacts) {
+        if (isTriggerAlreadyExecuted) {
+            return; // Prevent recursion
+        }
+        isTriggerAlreadyExecuted = true; // Set the flag
+    
+        for (Integer i = 0; i < newContacts.size(); i++) {
+            Contact newCont = newContacts[i];
+    
+            if (newCont.DummyJSON_Id__c != null && Integer.valueOf(newCont.DummyJSON_Id__c) > 100) {
+                try {
+                    DummyJSONCallout.postCreateDummyJSONUser(newCont.Id); // Pass the individual Contact ID
+                } catch (Exception e) {
+                    System.debug('Error in handleBeforeUpdate: ' + e.getMessage());
+                    newCont.addError('Callout to DummyJSON failed. Please try again later.'); // Add error to the specific contact
+                }
             }
         }
-
-        //Perform API callout with ids
-        if(!idsToPost.isEmpty()){
-		    DummyJSONCallout.postCreateDummyJSONUser(idsToPost);
-        }
-	}
+    
+        isTriggerAlreadyExecuted = false; // Reset the flag
+    }
 }
