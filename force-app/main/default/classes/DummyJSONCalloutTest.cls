@@ -12,7 +12,6 @@ public with sharing class DummyJSONCalloutTest {
 		insert cont;
 		// Register the mock callout class
 		Test.setMock(HttpCalloutMock.class, new DummyJSONCalloutMockGenerator());
-
 		// As this is a future method, we need to enclose it in Test.startTest() and Test.stopTest() to ensure it's executed in the test context.
 		Test.startTest();
 		//Set<String> testValue = new Set<String>{'1'};
