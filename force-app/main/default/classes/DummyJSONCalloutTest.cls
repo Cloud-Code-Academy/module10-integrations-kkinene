@@ -67,12 +67,21 @@ public with sharing class DummyJSONCalloutTest {
 		);
 		insert testContact;
 
+		// Declare a list of Ids
+		List<Id> idsOfContacts = new List<Id>();
+
+		// Insert the contact to get its ID
+		insert testContact;
+
+		// Add the contact's ID to the list
+		idsOfContacts.add(testContact.Id);
+
 		// Set the mock callout class
 		Test.setMock(HttpCalloutMock.class, new DummyJSONCalloutMockGenerator());
 
 		// As this is a future method, we need to enclose it in Test.startTest() and Test.stopTest() to ensure it's executed in the test context.
 		Test.startTest();
-		DummyJSONCallout.postCreateDummyJSONUser(testContact.Id);
+		DummyJSONCallout.postCreateDummyJSONUser(idsOfContacts);
 		Test.stopTest();
 
 		// Retrieve the updated contact to verify the changes
