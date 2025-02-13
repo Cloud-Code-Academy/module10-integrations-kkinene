@@ -70,9 +70,6 @@ public with sharing class DummyJSONCalloutTest {
 		// Declare a list of Ids
 		List<Id> idsOfContacts = new List<Id>();
 
-		// Insert the contact to get its ID
-		insert testContact;
-
 		// Add the contact's ID to the list
 		idsOfContacts.add(testContact.Id);
 
