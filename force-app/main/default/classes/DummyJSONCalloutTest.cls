@@ -12,19 +12,19 @@ public with sharing class DummyJSONCalloutTest {
 		insert cont;
 		// Register the mock callout class
 		Test.setMock(HttpCalloutMock.class, new DummyJSONCalloutMockGenerator());
-
 		// As this is a future method, we need to enclose it in Test.startTest() and Test.stopTest() to ensure it's executed in the test context.
 		Test.startTest();
-		DummyJSONCallout.getDummyJSONUserFromId('1'); // Call the method with an example userId
+		//Set<String> testValue = new Set<String>{'1'};
+		DummyJSONCallout.getDummyJSONUserFromId(new Set<String>{'1'});
 		Test.stopTest();
 
 		// After the stopTest, the future method will have run. Now we can check if the contact was created correctly.
 		cont = [
 			SELECT Email, Phone, Birthdate, MailingStreet, MailingCity, MailingPostalCode, MailingState, MailingCountry
 			FROM Contact
-			WHERE DummyJSON_Id__c = '1'
+			WHERE Id = :cont.Id
+			LIMIT 1
 		];
-
 		// Assert statements to ensure that the values in the created contact match what was in our mock response.
 		System.assertEquals('test@example.com', cont.Email, 'Email does not match your value: ' + cont.Email);
 		System.assertEquals('+123456789', cont.Phone, 'Phone does not match your value: ' + cont.Phone);
@@ -67,12 +67,18 @@ public with sharing class DummyJSONCalloutTest {
 		);
 		insert testContact;
 
+		// Declare a list of Ids
+		List<Id> idsOfContacts = new List<Id>();
+
+		// Add the contact's ID to the list
+		idsOfContacts.add(testContact.Id);
+
 		// Set the mock callout class
 		Test.setMock(HttpCalloutMock.class, new DummyJSONCalloutMockGenerator());
 
 		// As this is a future method, we need to enclose it in Test.startTest() and Test.stopTest() to ensure it's executed in the test context.
 		Test.startTest();
-		DummyJSONCallout.postCreateDummyJSONUser(testContact.Id);
+		DummyJSONCallout.postCreateDummyJSONUser(idsOfContacts);
 		Test.stopTest();
 
 		// Retrieve the updated contact to verify the changes
@@ -105,7 +111,7 @@ public with sharing class DummyJSONCalloutTest {
 		Map<String, Object> payloadMap = (Map<String, Object>) JSON.deserializeUntyped(payload);
 
 		// Assertions to check if the payload contains the right data
-		System.assertEquals(testContact.Id, payloadMap.get('salesforceId'), 'Id does not match.');
+		System.assertEquals(String.valueOf(testContact.Id), payloadMap.get('salesforceId'), 'Id does not match.');
 		System.assertEquals('John', payloadMap.get('firstName'), 'FirstName does not match.');
 		System.assertEquals('Doe', payloadMap.get('lastName'), 'LastName does not match.');
 		System.assertEquals('john.doe@example.com', payloadMap.get('email'), 'Email does not match.');
